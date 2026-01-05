@@ -43,11 +43,11 @@ class Worker extends Model
 
     public function deductions()
     {
-        return $this->hasMany(Deductions::class);
+        return $this->hasMany(Deduction::class);
     }
 
     public function payments()
     {
-        return $this->hasMany(Payments::class);
+        return $this->hasMany(Payment::class);
     }
 }

@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->date('payment_date');
             $table->decimal('payment_amount', 10, 2);
             $table->string('method');
-            $table->text('notes');
-            $table->foreignId('worker_id')->constrained('workers')->cascadeOnDelete();
+            $table->text('notes')->nullable();
+            $table->foreignUuid('worker_id')->constrained('workers')->cascadeOnDelete();
             $table->timestamps();
         });
     }

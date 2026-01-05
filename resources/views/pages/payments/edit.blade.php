@@ -1,4 +1,4 @@
-<x-layouts.app title="تسجيل دفعة">
+<x-layouts.app title="تعديل الدفعة">
     {{-- Page Header --}}
     <x-slot:header>
         <div class="flex items-center gap-4">
@@ -8,8 +8,8 @@
                 </svg>
             </a>
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">تسجيل دفعة</h1>
-                <p class="text-sm text-gray-500 mt-1">سجل دفعة للعامل.</p>
+                <h1 class="text-2xl font-bold text-gray-900">تعديل الدفعة</h1>
+                <p class="text-sm text-gray-500 mt-1">تعديل بيانات الدفعة.</p>
             </div>
         </div>
     </x-slot:header>
@@ -19,8 +19,9 @@
             <div class="px-6 py-4 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900">بيانات الدفعة</h3>
             </div>
-            <form action="{{ route('payments.store') }}" method="POST" class="p-6 space-y-6">
+            <form action="{{ route('payments.update', $payment) }}" method="POST" class="p-6 space-y-6">
                 @csrf
+                @method('PUT')
 
                 <div>
                     <label for="worker_id" class="block text-sm font-medium text-gray-700 mb-2">
@@ -31,8 +32,9 @@
                         required>
                         <option value="">اختر العامل</option>
                         @foreach ($workers as $worker)
-                            <option value="{{ $worker->id }}" {{ old('worker_id') == $worker->id ? 'selected' : '' }}>
-                                {{ $worker->name }} (رصيد: {{ number_format($worker->balance, 2) }} ج.م)
+                            <option value="{{ $worker->id }}"
+                                {{ old('worker_id', $payment->worker_id) == $worker->id ? 'selected' : '' }}>
+                                {{ $worker->name }}
                             </option>
                         @endforeach
                     </select>
@@ -45,8 +47,8 @@
                     <label for="payment_amount" class="block text-sm font-medium text-gray-700 mb-2">
                         المبلغ (ج.م) <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" id="payment_amount" name="payment_amount" value="{{ old('payment_amount') }}"
-                        step="0.01" min="0.01"
+                    <input type="number" id="payment_amount" name="payment_amount"
+                        value="{{ old('payment_amount', $payment->payment_amount) }}" step="0.01" min="0.01"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('payment_amount') border-red-500 @enderror"
                         placeholder="0.00" required>
                     @error('payment_amount')
@@ -59,7 +61,7 @@
                         تاريخ الدفع <span class="text-red-500">*</span>
                     </label>
                     <input type="date" id="payment_date" name="payment_date"
-                        value="{{ old('payment_date', date('Y-m-d')) }}"
+                        value="{{ old('payment_date', $payment->payment_date->format('Y-m-d')) }}"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 @error('payment_date') border-red-500 @enderror"
                         required>
                     @error('payment_date')
@@ -72,7 +74,7 @@
                     <div class="grid grid-cols-3 gap-3">
                         <label class="cursor-pointer">
                             <input type="radio" name="method" value="cash" class="peer hidden"
-                                {{ old('method', 'cash') == 'cash' ? 'checked' : '' }}>
+                                {{ old('method', $payment->method) == 'cash' ? 'checked' : '' }}>
                             <div
                                 class="p-4 border-2 border-gray-200 rounded-lg text-center transition-all peer-checked:border-green-500 peer-checked:bg-green-50">
                                 <svg class="w-8 h-8 mx-auto text-green-600" fill="none" stroke="currentColor"
@@ -86,7 +88,7 @@
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="method" value="bank_transfer" class="peer hidden"
-                                {{ old('method') == 'bank_transfer' ? 'checked' : '' }}>
+                                {{ old('method', $payment->method) == 'bank_transfer' ? 'checked' : '' }}>
                             <div
                                 class="p-4 border-2 border-gray-200 rounded-lg text-center transition-all peer-checked:border-primary-500 peer-checked:bg-primary-50">
                                 <svg class="w-8 h-8 mx-auto text-primary-600" fill="none" stroke="currentColor"
@@ -99,7 +101,7 @@
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="method" value="mobile_wallet" class="peer hidden"
-                                {{ old('method') == 'mobile_wallet' ? 'checked' : '' }}>
+                                {{ old('method', $payment->method) == 'mobile_wallet' ? 'checked' : '' }}>
                             <div
                                 class="p-4 border-2 border-gray-200 rounded-lg text-center transition-all peer-checked:border-purple-500 peer-checked:bg-purple-50">
                                 <svg class="w-8 h-8 mx-auto text-purple-600" fill="none" stroke="currentColor"
@@ -123,20 +125,19 @@
                     </label>
                     <textarea id="notes" name="notes" rows="3"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"
-                        placeholder="أي ملاحظات إضافية...">{{ old('notes') }}</textarea>
+                        placeholder="أي ملاحظات إضافية...">{{ old('notes', $payment->notes) }}</textarea>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
                     <x-ui.button href="{{ route('payments.index') }}" variant="secondary">
                         إلغاء
                     </x-ui.button>
-                    <x-ui.button type="submit" variant="success">
+                    <x-ui.button type="submit" variant="primary">
                         <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
                             </path>
                         </svg>
-                        تسجيل الدفعة
+                        حفظ التعديلات
                     </x-ui.button>
                 </div>
             </form>

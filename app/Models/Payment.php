@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Payments extends Model
+class Payment extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $table = 'payments';
 
@@ -17,6 +18,11 @@ class Payments extends Model
         'method',
         'notes',
         'worker_id',
+    ];
+
+    protected $casts = [
+        'payment_date' => 'date',
+        'payment_amount' => 'decimal:2',
     ];
 
     public function worker()

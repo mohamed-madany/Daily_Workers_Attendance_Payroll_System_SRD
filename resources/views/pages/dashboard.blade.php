@@ -211,15 +211,7 @@
                     class="text-sm text-primary-600 hover:text-primary-700 font-medium">عرض الكل</a>
             </div>
             <div class="divide-y divide-gray-100">
-                @php
-                    $recentPayments = $recentPayments ?? [
-                        ['name' => 'أحمد حسن', 'amount' => 1500, 'date' => 'اليوم', 'method' => 'نقدي'],
-                        ['name' => 'محمد علي', 'amount' => 2000, 'date' => 'أمس', 'method' => 'تحويل بنكي'],
-                        ['name' => 'خالد يوسف', 'amount' => 1200, 'date' => 'منذ يومين', 'method' => 'محفظة إلكترونية'],
-                        ['name' => 'عمر فاروق', 'amount' => 800, 'date' => 'منذ 3 أيام', 'method' => 'نقدي'],
-                    ];
-                @endphp
-                @foreach ($recentPayments as $payment)
+                @forelse ($recentPayments as $payment)
                     <div class="px-6 py-3 flex items-center justify-between hover:bg-gray-50">
                         <div class="flex items-center">
                             <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center ml-3">
@@ -241,7 +233,11 @@
                             <p class="text-xs text-gray-400">{{ $payment['method'] }}</p>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="px-6 py-8 text-center">
+                        <p class="text-gray-500">لا توجد مدفوعات مسجلة</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
