@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attendance;
 use App\Models\Worker;
 use Illuminate\Http\Request;
     
@@ -15,6 +16,7 @@ class DashboardController extends Controller
     {
         return view('pages.dashboard', [
             'workers' => Worker::all(),
+            'attendances' => Attendance::all(),
         ]);
     }
 }

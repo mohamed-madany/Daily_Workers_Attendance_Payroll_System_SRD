@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\DailyLedgerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DeductionController;
 use App\Http\Controllers\WorkerController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,55 +39,36 @@ Route::prefix('workers')->name('workers.')->group(function () {
 
 // Attendance
 Route::prefix('attendance')->name('attendance.')->group(function () {
-    Route::get('/', function () {
-        return view('pages.attendance.index');
-    })->name('index');
+    Route::get('/', [AttendanceController::class, 'index'])->name('index');
     
-    Route::get('/create', function () {
-        return view('pages.attendance.create');
-    })->name('create');
+    Route::get('/create', [AttendanceController::class, 'create'])->name('create');
+    Route::get('/{attendance}/edit', [AttendanceController::class, 'edit'])->name('edit');
     
-    Route::post('/', function () {
-        return redirect()->route('attendance.index')->with('success', 'Attendance recorded successfully!');
-    })->name('store');
+    Route::post('/', [AttendanceController::class, 'store'])->name('store');
     
-    Route::put('/{attendance}', function ($attendance) {
-        return redirect()->route('attendance.index')->with('success', 'Attendance updated successfully!');
-    })->name('update');
+    Route::put('/{attendance}', [AttendanceController::class, 'update'])->name('update');
     
-    Route::delete('/{attendance}', function ($attendance) {
-        return redirect()->route('attendance.index')->with('success', 'Attendance deleted successfully!');
-    })->name('destroy');
+    Route::delete('/{attendance}', [AttendanceController::class, 'destroy'])->name('destroy');
 });
 
 // Deductions
 Route::prefix('deductions')->name('deductions.')->group(function () {
-    Route::get('/', function () {
-        return view('pages.deductions.index');
-    })->name('index');
+    Route::get('/', [DeductionController::class, 'index'])->name('index');
     
-    Route::get('/create', function () {
-        return view('pages.deductions.create');
-    })->name('create');
+    Route::get('/create', [DeductionController::class, 'create'])->name('create');
     
-    Route::post('/', function () {
-        return redirect()->route('deductions.index')->with('success', 'Deduction added successfully!');
-    })->name('store');
+    Route::post('/', [DeductionController::class, 'store'])->name('store');
     
-    Route::put('/{deduction}', function ($deduction) {
-        return redirect()->route('deductions.index')->with('success', 'Deduction updated successfully!');
-    })->name('update');
+    Route::get('/{deduction}/edit', [DeductionController::class, 'edit'])->name('edit');
     
-    Route::delete('/{deduction}', function ($deduction) {
-        return redirect()->route('deductions.index')->with('success', 'Deduction deleted successfully!');
-    })->name('destroy');
+    Route::put('/{deduction}', [DeductionController::class, 'update'])->name('update');
+    
+    Route::delete('/{deduction}', [DeductionController::class, 'destroy'])->name('destroy');
 });
 
 // Daily Ledger (read-only)
 Route::prefix('ledger')->name('ledger.')->group(function () {
-    Route::get('/', function () {
-        return view('pages.ledger.index');
-    })->name('index');
+    Route::get('/', [DailyLedgerController::class, '__invoke'])->name('index');
 });
 
 // Payments

@@ -1,4 +1,4 @@
-<x-layouts.app title="إضافة خصم">
+<x-layouts.app title="تعديل خصم">
     {{-- Page Header --}}
     <x-slot:header>
         <div class="flex items-center gap-4">
@@ -8,8 +8,8 @@
                 </svg>
             </a>
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">إضافة خصم</h1>
-                <p class="text-sm text-gray-500 mt-1">سجل خصم جديد على عامل.</p>
+                <h1 class="text-2xl font-bold text-gray-900">تعديل خصم</h1>
+                <p class="text-sm text-gray-500 mt-1">تعديل خصم على عامل.</p>
             </div>
         </div>
     </x-slot:header>
@@ -19,24 +19,26 @@
             <div class="px-6 py-4 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900">بيانات الخصم</h3>
             </div>
-            <form action="{{ route('deductions.store') ?? '#' }}" method="POST" class="p-6 space-y-6">
+            <form action="{{ route('deductions.update', $deduction->id) ?? '#' }}" method="POST" class="p-6 space-y-6">
                 @csrf
+                @method('PUT')
                 
+                {{-- Worker Info (Read-only) --}}
                 <div>
-                    <label for="worker_id" class="block text-sm font-medium text-gray-700 mb-2">
-                        العامل <span class="text-red-500">*</span>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        العامل
                     </label>
-                    <select 
-                        id="worker_id" 
-                        name="worker_id" 
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                        required
-                    >
-                        <option value="">اختر العامل</option>
-                        @foreach ($workers as $worker)
-                            <option value="{{ $worker->id }}">{{ $worker->name }}</option>
-                        @endforeach
-                    </select>
+                    <div class="flex items-center p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                        <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center ml-3">
+                            <span
+                                class="text-sm font-semibold text-primary-700">{{ mb_substr($deduction->worker->name, 0, 1) }}</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">{{ $deduction->worker->name }}</p>
+                            <p class="text-xs text-gray-500">{{ $deduction->worker->role }}</p>
+                        </div>
+                    </div>
+                    <input type="hidden" name="worker_id" value="{{ $deduction->worker_id }}">
                 </div>
 
                 <div>
@@ -47,7 +49,7 @@
                         type="date" 
                         id="date" 
                         name="date" 
-                        value="{{ date('Y-m-d') }}"
+                        value="{{ $deduction->date }}"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                         required
                     >
@@ -63,6 +65,7 @@
                             type="number" 
                             id="amount" 
                             name="amount" 
+                            value="{{ $deduction->deduction_amount }}"
                             step="0.01"
                             min="0"
                             class="w-full pr-8 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -101,7 +104,7 @@
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"
                         placeholder="أدخل سبب الخصم..."
                         required
-                    ></textarea>
+                    >{{ $deduction->reason }}</textarea>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
@@ -112,7 +115,7 @@
                         <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        إضافة الخصم
+                        تعديل الخصم
                     </x-ui.button>
                 </div>
             </form>

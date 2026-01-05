@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\WorkerRequest;
 use App\Models\Worker;
 use Illuminate\Http\Request;
 
@@ -27,15 +28,11 @@ class WorkerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(WorkerRequest $request)
     {
-        $worker = new Worker;
-        $worker->name = $request->name;
-        $worker->role = $request->role;
-        $worker->daily_fee = $request->daily_fee;
-        $worker->status = $request->status;
-        $worker->phone = $request->phone;
-        $worker->save();
+        $validated = $request->validated();
+            
+        Worker::create($validated);
 
         return redirect()->route('workers.index')->with('success', 'تم إضافة العامل بنجاح');
     }
@@ -60,7 +57,7 @@ class WorkerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(WorkerRequest $request, string $id)
     {
         Worker::findOrFail($id)->update($request->all());
         return redirect()->route('workers.index')->with('success', 'تم تحديث بيانات العامل بنجاح');

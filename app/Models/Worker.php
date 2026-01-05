@@ -31,7 +31,7 @@ class Worker extends Model
         return $this->hasOne(User::class);
     }
 
-    public function attendance()
+    public function attendances()
     {
         return $this->hasMany(Attendance::class);
     }

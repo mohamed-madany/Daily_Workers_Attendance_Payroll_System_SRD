@@ -21,7 +21,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">خصومات اليوم</p>
-                    <p class="text-2xl font-bold text-red-600 mt-1">{{ number_format($stats['today'] ?? 450, 2) }} ج.م</p>
+                    <p class="text-2xl font-bold text-red-600 mt-1">{{ $deductions->where('date', now()->toDateString())->sum('deduction_amount') }} ج.م</p>
                 </div>
                 <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,7 +34,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">هذا الأسبوع</p>
-                    <p class="text-2xl font-bold text-orange-600 mt-1">{{ number_format($stats['week'] ?? 1250, 2) }} ج.م</p>
+                    <p class="text-2xl font-bold text-orange-600 mt-1">{{ $totalDeductionsThisWeek }} ج.م</p>
                 </div>
                 <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,7 +47,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">هذا الشهر</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($stats['month'] ?? 4500, 2) }} ج.م</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ $totalDeductionsThisMonth }} ج.م</p>
                 </div>
                 <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,45 +90,42 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    @php
-                        $deductions = $deductions ?? collect([
-                            ['id' => 1, 'worker_name' => 'محمد علي', 'date' => date('Y-m-d'), 'amount' => 50, 'reason' => 'تأخير - 30 دقيقة'],
-                            ['id' => 2, 'worker_name' => 'خالد يوسف', 'date' => date('Y-m-d'), 'amount' => 100, 'reason' => 'انصراف مبكر بدون إذن'],
-                            ['id' => 3, 'worker_name' => 'عمر فاروق', 'date' => date('Y-m-d', strtotime('-1 day')), 'amount' => 200, 'reason' => 'إتلاف معدات'],
-                            ['id' => 4, 'worker_name' => 'أحمد حسن', 'date' => date('Y-m-d', strtotime('-2 days')), 'amount' => 150, 'reason' => 'سلفة مقدمة'],
-                        ]);
-                    @endphp
+                   
                     @forelse($deductions as $deduction)
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4">
                             <div class="flex items-center">
                                 <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center ml-3">
-                                    <span class="text-xs font-semibold text-red-700">{{ mb_substr($deduction['worker_name'], 0, 1) }}</span>
+                                    <span class="text-xs font-semibold text-red-700">{{ mb_substr($deduction->worker->name, 0, 1) }}</span>
                                 </div>
-                                <span class="text-sm font-medium text-gray-900">{{ $deduction['worker_name'] }}</span>
+                                <span class="text-sm font-medium text-gray-900">{{ $deduction->worker->name }}</span>
                             </div>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="text-sm text-gray-900">{{ $deduction['date'] }}</span>
+                            <span class="text-sm text-gray-900">{{ $deduction->date }}</span>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="text-sm font-bold text-red-600">-{{ number_format($deduction['amount'], 2) }} ج.م</span>
+                            <span class="text-sm font-bold text-red-600">-{{ number_format($deduction->deduction_amount, 2) }} ج.م</span>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="text-sm text-gray-600">{{ $deduction['reason'] }}</span>
+                            <span class="text-sm text-gray-600">{{ $deduction->reason }}</span>
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-2">
-                                <button class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                                <a href="{{ route('deductions.edit', $deduction->id) }}" class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                     </svg>
-                                </button>
-                                <button class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                </button>
+                                </a>
+                                <form action="{{ route('deductions.destroy', $deduction->id) ?? '#' }}" method="POST" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                    @method('DELETE')
+                                    @csrf
+                                    <button type="submit" onclick="return confirm('هل أنت متأكد من حذف هذه الخصم؟')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>

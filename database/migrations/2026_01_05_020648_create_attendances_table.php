@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->date('date');
             $table->string('status');
-            $table->time('check_in_time');
-            $table->time('check_out_time');
-            $table->decimal('worked_hours', 4, 2)->default(0);
+            $table->time('check_in_time')->nullable();
+            $table->time('check_out_time')->nullable();
+            $table->decimal('worked_hours', 4, 2)->nullable()->default(0);
             $table->timestamps();
-            $table->foreignId('worker_id')->constrained('workers')->cascadeOnDelete();
+            $table->uuid('worker_id');
+            $table->foreign('worker_id')->references('id')->on('workers')->cascadeOnDelete();
             $table->unique(['worker_id', 'date']);
         });
     }

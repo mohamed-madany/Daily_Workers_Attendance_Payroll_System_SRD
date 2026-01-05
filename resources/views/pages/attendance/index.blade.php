@@ -21,7 +21,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">حاضرون اليوم</p>
-                    <p class="text-2xl font-bold text-green-600 mt-1">{{ $stats['present'] ?? 21 }}</p>
+                    <p class="text-2xl font-bold text-green-600 mt-1">{{ $attendances->where('date', now()->toDateString())->where('status','present')->count() }}</p>
                 </div>
                 <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,7 +34,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">متأخرون اليوم</p>
-                    <p class="text-2xl font-bold text-yellow-600 mt-1">{{ $stats['late'] ?? 2 }}</p>
+                    <p class="text-2xl font-bold text-yellow-600 mt-1">{{ $attendances->where('date', now()->toDateString())->where('status','late')->count() }}</p>
                 </div>
                 <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,7 +47,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">غائبون اليوم</p>
-                    <p class="text-2xl font-bold text-red-600 mt-1">{{ $stats['absent'] ?? 1 }}</p>
+                    <p class="text-2xl font-bold text-red-600 mt-1">{{ $attendances->where('date', now()->toDateString())->where('status','absent')->count() }}</p>
                 </div>
                 <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,7 +60,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">إجمالي الساعات</p>
-                    <p class="text-2xl font-bold text-primary-600 mt-1">{{ $stats['total_hours'] ?? 189 }}</p>
+                    <p class="text-2xl font-bold text-primary-600 mt-1">{{ $attendances->where('date', now()->toDateString())->sum('worked_hours') }}</p>
                 </div>
                 <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,43 +100,34 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    @php
-                        $records = $records ?? collect([
-                            ['id' => 1, 'worker_name' => 'أحمد حسن', 'date' => date('Y-m-d'), 'check_in' => '08:00', 'check_out' => '17:00', 'worked_hours' => 9, 'status' => 'present'],
-                            ['id' => 2, 'worker_name' => 'محمد علي', 'date' => date('Y-m-d'), 'check_in' => '08:30', 'check_out' => '17:00', 'worked_hours' => 8.5, 'status' => 'late'],
-                            ['id' => 3, 'worker_name' => 'خالد يوسف', 'date' => date('Y-m-d'), 'check_in' => '08:00', 'check_out' => '17:00', 'worked_hours' => 9, 'status' => 'present'],
-                            ['id' => 4, 'worker_name' => 'عمر فاروق', 'date' => date('Y-m-d'), 'check_in' => '—', 'check_out' => '—', 'worked_hours' => 0, 'status' => 'absent'],
-                            ['id' => 5, 'worker_name' => 'محمود سمير', 'date' => date('Y-m-d'), 'check_in' => '08:00', 'check_out' => '13:00', 'worked_hours' => 5, 'status' => 'half_day'],
-                        ]);
-                    @endphp
-                    @forelse($records as $record)
+                    @forelse($attendances as $attendance)
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4">
                             <div class="flex items-center">
                                 <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center ml-3">
-                                    <span class="text-xs font-semibold text-primary-700">{{ mb_substr($record['worker_name'], 0, 1) }}</span>
+                                    <span class="text-xs font-semibold text-primary-700">{{ mb_substr($attendance->worker->name, 0, 1) }}</span>
                                 </div>
-                                <span class="text-sm font-medium text-gray-900">{{ $record['worker_name'] }}</span>
+                                <span class="text-sm font-medium text-gray-900">{{ $attendance->worker->name }}</span>
                             </div>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="text-sm text-gray-900">{{ $record['date'] }}</span>
+                            <span class="text-sm text-gray-900">{{ $attendance->date }}</span>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="text-sm text-gray-900">{{ $record['check_in'] }}</span>
+                            <span class="text-sm text-gray-900">{{ $attendance->check_in_time }}</span>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="text-sm text-gray-900">{{ $record['check_out'] }}</span>
+                            <span class="text-sm text-gray-900">{{ $attendance->check_out_time }}</span>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="text-sm text-gray-900">{{ $record['worked_hours'] }} ساعة</span>
+                            <span class="text-sm text-gray-900">{{ $attendance->worked_hours }} ساعة</span>
                         </td>
                         <td class="px-6 py-4">
-                            @if($record['status'] === 'present')
+                            @if($attendance->status === 'present')
                                 <x-ui.badge variant="success">حاضر</x-ui.badge>
-                            @elseif($record['status'] === 'late')
+                            @elseif($attendance->status === 'late')
                                 <x-ui.badge variant="warning">متأخر</x-ui.badge>
-                            @elseif($record['status'] === 'half_day')
+                            @elseif($attendance->status === 'half_day')
                                 <x-ui.badge variant="info">نصف يوم</x-ui.badge>
                             @else
                                 <x-ui.badge variant="danger">غائب</x-ui.badge>
@@ -144,11 +135,11 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-2">
-                                <button class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                                <a href="{{ route('attendance.edit', $attendance->id) ?? '#' }}" class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                     </svg>
-                                </button>
+                                </a>
                             </div>
                         </td>
                     </tr>
