@@ -40,18 +40,14 @@
                     <label for="role" class="block text-sm font-medium text-gray-700 mb-2">
                         الوظيفة <span class="text-red-500">*</span>
                     </label>
-                    <select 
+                    <input 
+                        type="text" 
                         id="role" 
                         name="role" 
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="أدخل الوظيفة"
                         required
                     >
-                        <option value="">اختر الوظيفة</option>
-                        <option value="general">عامل عادي</option>
-                        <option value="skilled">عامل ماهر</option>
-                        <option value="supervisor">مشرف</option>
-                        <option value="foreman">رئيس عمال</option>
-                    </select>
                 </div>
 
                 <div>
@@ -86,7 +82,7 @@
 
                 <div>
                     <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-                        رقم الهاتف <span class="text-gray-400 text-xs">(اختياري)</span>
+                        رقم الهاتف 
                     </label>
                     <input 
                         type="tel" 
@@ -94,6 +90,7 @@
                         name="phone" 
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="01xxxxxxxxx"
+                        required
                     >
                 </div>
 

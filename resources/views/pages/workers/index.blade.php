@@ -21,7 +21,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">إجمالي العمال</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['total'] ?? 24 }}</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ count($workers) }}</p>
                 </div>
                 <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,7 +34,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">عمال نشطون</p>
-                    <p class="text-2xl font-bold text-green-600 mt-1">{{ $stats['active'] ?? 22 }}</p>
+                    <p class="text-2xl font-bold text-green-600 mt-1">{{ $workers->where('status', 'active')->count() }}</p>
                 </div>
                 <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,7 +47,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wider">عمال غير نشطين</p>
-                    <p class="text-2xl font-bold text-gray-500 mt-1">{{ $stats['inactive'] ?? 2 }}</p>
+                    <p class="text-2xl font-bold text-gray-500 mt-1">{{ $workers->where('status', 'inactive')->count() }}</p>
                 </div>
                 <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,33 +88,24 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    @php
-                        $workers = $workers ?? collect([
-                            ['id' => 1, 'name' => 'أحمد حسن', 'role' => 'مشرف', 'daily_fee' => 250, 'status' => 'active'],
-                            ['id' => 2, 'name' => 'محمد علي', 'role' => 'عامل ماهر', 'daily_fee' => 200, 'status' => 'active'],
-                            ['id' => 3, 'name' => 'خالد يوسف', 'role' => 'عامل عادي', 'daily_fee' => 150, 'status' => 'active'],
-                            ['id' => 4, 'name' => 'عمر فاروق', 'role' => 'رئيس عمال', 'daily_fee' => 300, 'status' => 'inactive'],
-                            ['id' => 5, 'name' => 'محمود سمير', 'role' => 'عامل عادي', 'daily_fee' => 150, 'status' => 'active'],
-                        ]);
-                    @endphp
                     @forelse($workers as $worker)
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4">
                             <div class="flex items-center">
                                 <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center ml-3">
-                                    <span class="text-sm font-semibold text-primary-700">{{ mb_substr($worker['name'], 0, 1) }}</span>
+                                    <span class="text-sm font-semibold text-primary-700">{{ mb_substr($worker->name, 0, 1) }}</span>
                                 </div>
-                                <span class="text-sm font-medium text-gray-900">{{ $worker['name'] }}</span>
+                                <span class="text-sm font-medium text-gray-900">{{ $worker->name }}</span>
                             </div>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="text-sm text-gray-600">{{ $worker['role'] }}</span>
+                            <span class="text-sm text-gray-600">{{ $worker->role }}</span>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="text-sm font-medium text-gray-900">{{ number_format($worker['daily_fee'], 2) }} ج.م</span>
+                            <span class="text-sm font-medium text-gray-900">{{ number_format($worker->daily_fee, 2) }} ج.م</span>
                         </td>
                         <td class="px-6 py-4">
-                            @if($worker['status'] === 'active')
+                            @if($worker->status === 'active')
                                 <x-ui.badge variant="success">نشط</x-ui.badge>
                             @else
                                 <x-ui.badge variant="gray">غير نشط</x-ui.badge>
@@ -122,16 +113,20 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('workers.edit', $worker['id']) ?? '#' }}" class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                                <a href="{{ route('workers.edit', $worker->id) ?? '#' }}" class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                     </svg>
                                 </a>
-                                <button class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                </button>
+                                <form action="{{ route('workers.destroy', $worker->id) ?? '#' }}" method="POST" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                    @method('DELETE')
+                                    @csrf
+                                    <button type="submit" onclick="return confirm('هل أنت متأكد من حذف هذا العامل؟')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>

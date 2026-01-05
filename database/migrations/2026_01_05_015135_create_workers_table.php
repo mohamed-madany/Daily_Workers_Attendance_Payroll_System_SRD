@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('workers', function (Blueprint $table) {
-            $table->uuid()->primary();
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->string('role');
             $table->decimal('daily_fee', 10, 2);
             $table->string('status')->default('active');
+            $table->string('phone');
             $table->timestamps();
         });
     }

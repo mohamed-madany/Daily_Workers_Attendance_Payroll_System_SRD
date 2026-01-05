@@ -23,6 +23,7 @@ class Worker extends Model
         'role',
         'daily_fee',
         'status',
+        'phone',
     ];
 
     public function user()
@@ -39,10 +40,12 @@ class Worker extends Model
     {
         return $this->hasMany(DailyLedger::class);
     }
+
     public function deductions()
     {
         return $this->hasMany(Deductions::class);
     }
+
     public function payments()
     {
         return $this->hasMany(Payments::class);

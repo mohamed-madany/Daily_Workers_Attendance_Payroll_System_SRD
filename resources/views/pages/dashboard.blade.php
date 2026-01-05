@@ -24,12 +24,9 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-500">إجمالي العمال</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ $totalWorkers ?? 24 }}</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ $workers->count() }}</p>
                     <p class="text-xs text-green-600 mt-2 flex items-center">
-                        <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                        </svg>
-                        +2 هذا الأسبوع
+                        {{ $workers->where('status', 'active')->count() }} عامل نشط
                     </p>
                 </div>
                 <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">

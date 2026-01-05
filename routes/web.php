@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\WorkerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,36 +16,22 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Dashboard
-Route::get('/', function () {
-    return view('pages.dashboard');
-})->name('dashboard');
+Route::get('/', [DashboardController::class, '__invoke'])->name('dashboard');
 
 // Workers CRUD
 Route::prefix('workers')->name('workers.')->group(function () {
-    Route::get('/', function () {
-        return view('pages.workers.index');
-    })->name('index');
+    Route::get('/', [WorkerController::class, 'index'])->name('index');
     
-    Route::get('/create', function () {
-        return view('pages.workers.create');
-    })->name('create');
+    Route::get('/create', [WorkerController::class, 'create'])->name('create');
     
-    Route::get('/{worker}/edit', function ($worker) {
-        return view('pages.workers.edit', ['workerId' => $worker]);
-    })->name('edit');
+    Route::get('/{worker}/edit', [WorkerController::class, 'edit'])->name('edit');
     
     // POST routes - placeholder for controller integration
-    Route::post('/', function () {
-        return redirect()->route('workers.index')->with('success', 'Worker created successfully!');
-    })->name('store');
+    Route::post('/store', [WorkerController::class, 'store'])->name('store');
     
-    Route::put('/{worker}', function ($worker) {
-        return redirect()->route('workers.index')->with('success', 'Worker updated successfully!');
-    })->name('update');
+    Route::put('/update/{worker}', [WorkerController::class, 'update'])->name('update');
     
-    Route::delete('/{worker}', function ($worker) {
-        return redirect()->route('workers.index')->with('success', 'Worker deleted successfully!');
-    })->name('destroy');
+    Route::delete('/destroy/{worker}', [WorkerController::class,'destroy'])->name('destroy');
 });
 
 // Attendance
