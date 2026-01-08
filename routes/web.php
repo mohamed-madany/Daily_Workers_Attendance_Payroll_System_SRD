@@ -5,11 +5,12 @@ use App\Http\Controllers\DailyLedgerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeductionController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\WorkerReportController;
+use App\Http\Controllers\MonthlyReportController;
 use App\Http\Controllers\WorkerController;
 use Illuminate\Support\Facades\Route;
 
 /*
-|--------------------------------------------------------------------------
 | Daily Workers ERP - Web Routes
 |--------------------------------------------------------------------------
 |
@@ -89,13 +90,11 @@ Route::prefix('payments')->name('payments.')->group(function () {
 
 // Reports
 Route::prefix('reports')->name('reports.')->group(function () {
-    Route::get('/monthly', function () {
-        return view('pages.reports.monthly');
-    })->name('monthly');
+    Route::get('/monthly', [MonthlyReportController::class, '__invoke'])->name('monthly');
 
-    Route::get('/worker', function () {
-        return view('pages.reports.worker');
-    })->name('worker');
+    Route::get('/worker', [WorkerReportController::class, 'index'])->name('worker');
+    Route::post('/worker', [WorkerReportController::class, 'filterUser'])->name('worker.filter');
+    Route::get('/worker/{worker}', [WorkerReportController::class, 'show'])->name('worker.show');
 });
 
 // Authentication placeholder

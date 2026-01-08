@@ -24,9 +24,9 @@ class AttendanceRequest extends FormRequest
         return [
             'worker_id' => 'required|exists:workers,id',
             'date' => 'required|date',
-            'check_in_time' => 'nullable',
-            'check_out_time' => 'nullable',
-            'status' => 'required|string',
+            'check_in_time' => 'nullable|date_format:H:i',
+            'check_out_time' => 'nullable|date_format:H:i',
+            'status' => 'required|in:present,late,half_day,absent',
         ];
     }
 }

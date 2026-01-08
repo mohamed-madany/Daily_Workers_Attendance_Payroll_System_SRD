@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->string('status');
+            $table->enum('status', ['present', 'late','half_day', 'absent'])->default('absent');
             $table->time('check_in_time')->nullable();
             $table->time('check_out_time')->nullable();
             $table->decimal('worked_hours', 4, 2)->nullable()->default(0);

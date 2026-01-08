@@ -42,7 +42,7 @@ class WorkerController extends Controller
      */
     public function show(string $id)
     {
-        //
+        //return view('pages.reports.worker', compact('id'));
     }
 
     /**

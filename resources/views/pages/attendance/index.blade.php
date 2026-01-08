@@ -152,6 +152,9 @@
                     @endforelse
                 </tbody>
             </table>
+            
         </div>
+       
     </div>
+    <div class="mt-4 mr-4 flex ">{{ $attendances->links() }}</div>
 </x-layouts.app>

@@ -19,7 +19,24 @@
             <div class="px-6 py-4 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900">بيانات الحضور</h3>
             </div>
-            <form action="{{ route('attendance.store') ?? '#' }}" method="POST" class="p-6 space-y-6">
+            <form action="{{ route('attendance.store') ?? '#' }}" method="POST" class="p-6 space-y-6"
+                x-data="{
+                    status: 'present',
+                    get isAbsent() {
+                        return this.status === 'absent';
+                    },
+                    init() {
+                        this.$watch('status', value => {
+                            if (value === 'absent') {
+                                this.$refs.checkIn.value = '';
+                                this.$refs.checkOut.value = '';
+                            } else {
+                                if (!this.$refs.checkIn.value) this.$refs.checkIn.value = '08:00';
+                                if (!this.$refs.checkOut.value) this.$refs.checkOut.value = '17:00';
+                            }
+                        });
+                    }
+                }">
                 @csrf
 
                 <div>
@@ -50,17 +67,19 @@
                         <label for="check_in_time" class="block text-sm font-medium text-gray-700 mb-2">
                             وقت الحضور
                         </label>
-                        <input type="time" id="check_in_time" name="check_in_time" value="08:00"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            required>
+                        <input type="time" id="check_in_time" name="check_in_time" value="08:00" x-ref="checkIn"
+                            :disabled="isAbsent" :required="!isAbsent"
+                            :class="isAbsent ? 'bg-gray-100 cursor-not-allowed text-gray-400' : ''"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                     </div>
                     <div>
                         <label for="check_out_time" class="block text-sm font-medium text-gray-700 mb-2">
                             وقت الانصراف
                         </label>
-                        <input type="time" id="check_out_time" name="check_out_time" value="17:00"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            required>
+                        <input type="time" id="check_out_time" name="check_out_time" value="17:00" x-ref="checkOut"
+                            :disabled="isAbsent" :required="!isAbsent"
+                            :class="isAbsent ? 'bg-gray-100 cursor-not-allowed text-gray-400' : ''"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                     </div>
                 </div>
 
@@ -68,7 +87,8 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">الحالة</label>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <label class="cursor-pointer">
-                            <input type="radio" name="status" value="present" class="peer hidden" checked>
+                            <input type="radio" name="status" value="present" x-model="status" class="peer hidden"
+                                checked>
                             <div
                                 class="p-3 border-2 border-gray-200 rounded-lg text-center transition-all peer-checked:border-green-500 peer-checked:bg-green-50">
                                 <svg class="w-6 h-6 mx-auto text-green-600" fill="none" stroke="currentColor"
@@ -80,7 +100,7 @@
                             </div>
                         </label>
                         <label class="cursor-pointer">
-                            <input type="radio" name="status" value="late" class="peer hidden">
+                            <input type="radio" name="status" value="late" x-model="status" class="peer hidden">
                             <div
                                 class="p-3 border-2 border-gray-200 rounded-lg text-center transition-all peer-checked:border-yellow-500 peer-checked:bg-yellow-50">
                                 <svg class="w-6 h-6 mx-auto text-yellow-600" fill="none" stroke="currentColor"
@@ -92,7 +112,7 @@
                             </div>
                         </label>
                         <label class="cursor-pointer">
-                            <input type="radio" name="status" value="half_day" class="peer hidden">
+                            <input type="radio" name="status" value="half_day" x-model="status" class="peer hidden">
                             <div
                                 class="p-3 border-2 border-gray-200 rounded-lg text-center transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50">
                                 <svg class="w-6 h-6 mx-auto text-blue-600" fill="none" stroke="currentColor"
@@ -105,7 +125,8 @@
                             </div>
                         </label>
                         <label class="cursor-pointer">
-                            <input type="radio" name="status" value="absent" class="peer hidden">
+                            <input type="radio" name="status" value="absent" x-model="status"
+                                class="peer hidden">
                             <div
                                 class="p-3 border-2 border-gray-200 rounded-lg text-center transition-all peer-checked:border-red-500 peer-checked:bg-red-50">
                                 <svg class="w-6 h-6 mx-auto text-red-600" fill="none" stroke="currentColor"

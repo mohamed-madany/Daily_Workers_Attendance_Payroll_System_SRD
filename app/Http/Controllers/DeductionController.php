@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Deduction;
 use App\Models\Worker;
-use App\Services\Attendance\DailyLedgerService;
+use App\Services\DailyLedgerService;
 use Illuminate\Http\Request;
 
 class DeductionController extends Controller
@@ -14,7 +14,7 @@ class DeductionController extends Controller
      */
     public function index()
     {
-        $deductions = Deduction::all();
+        $deductions = Deduction::latest()->simplePaginate(10);
 
         return view('pages.deductions.index', [
             'deductions' => $deductions,

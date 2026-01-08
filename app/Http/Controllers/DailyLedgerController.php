@@ -14,6 +14,7 @@ class DailyLedgerController extends Controller
     {
         $ledgers = DailyLedger::with('worker')
             ->orderBy('date', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         return view('pages.ledger.index', compact('ledgers'));

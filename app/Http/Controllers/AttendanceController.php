@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AttendanceRequest;
 use App\Models\Attendance;
 use App\Models\Worker;
-use App\Services\Attendance\AttendanceService;
-use Illuminate\Http\Request;
+use App\Services\AttendanceService;
+use DomainException;
 
 class AttendanceController extends Controller
 {
@@ -17,7 +17,7 @@ class AttendanceController extends Controller
     {
         return view('pages.attendance.index', [
             'workers' => Worker::all(),
-            'attendances' => Attendance::all(),
+            'attendances' => Attendance::latest()->simplePaginate(10),
         ]);
     }
 
@@ -27,11 +27,7 @@ class AttendanceController extends Controller
     public function create()
     {
         $today = now()->toDateString();
-        $workers = Worker::where('status', 'active')
-            ->whereDoesntHave('attendances', function ($query) use ($today) {
-                $query->where('date', $today);
-            })
-            ->get();
+        $workers = Worker::where('status', 'active')->get();
 
         return view('pages.attendance.create', [
             'workers' => $workers,
@@ -43,12 +39,27 @@ class AttendanceController extends Controller
      */
     public function store(AttendanceRequest $request)
     {
-        app(AttendanceService::class)
-            ->record($request->validated());
+        try {
+            if ($request['status'] == 'absent') {
+                app(AttendanceService::class)
+                    ->recordAbsent($request->validated());
 
-        return redirect()
-            ->route('attendance.index')
-            ->with('success', 'تم تسجيل الحضور بنجاح');
+                return redirect()
+                    ->route('attendance.index')
+                    ->with('success', 'تم تسجيل الغياب بنجاح');
+            }
+
+            app(AttendanceService::class)
+                ->record($request->validated());
+
+            return redirect()
+                ->route('attendance.index')
+                ->with('success', 'تم تسجيل الحضور بنجاح');
+        } catch (DomainException $e) {
+            return redirect()
+                ->route('attendance.create')
+                ->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -68,7 +79,7 @@ class AttendanceController extends Controller
 
         return view('pages.attendance.edit', [
             'attendance' => $attendance,
-        ]);     
+        ]);
     }
 
     /**

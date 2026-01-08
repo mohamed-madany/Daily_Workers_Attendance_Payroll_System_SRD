@@ -82,7 +82,7 @@ class PaymentController extends Controller
     public function edit(Payment $payment)
     {
         $workers = Worker::where('status', 'active')->get();
-        
+
         return view('pages.payments.edit', compact('payment', 'workers'));
     }
 

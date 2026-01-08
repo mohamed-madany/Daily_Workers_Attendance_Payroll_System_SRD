@@ -65,9 +65,9 @@
                 <h3 class="text-lg font-semibold text-gray-900">سجل الخصومات</h3>
                 <div class="flex items-center gap-3">
                     <div class="relative">
-                        <input 
-                            type="text" 
-                            placeholder="بحث..." 
+                        <input
+                            type="text"
+                            placeholder="بحث..."
                             class="w-full sm:w-64 pr-10 pl-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                         >
                         <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,7 +90,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                   
+
                     @forelse($deductions as $deduction)
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4">
@@ -145,4 +145,5 @@
             </table>
         </div>
     </div>
+    <div class="mt-2 mr-4 flex ">{{ $deductions->links() }}</div>
 </x-layouts.app>
